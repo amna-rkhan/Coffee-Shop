@@ -22,7 +22,6 @@ class CoffeeIntroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Declare variables first
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
