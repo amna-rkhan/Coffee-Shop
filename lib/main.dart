@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-
+import 'package:finalboss/third.dart';
+import 'package:provider/provider.dart'; // <--- ADD THIS LINE
 void main() {
-  // We run MyApp as the root
-  runApp(const MyApp());
-}
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => CoffeeProvider(),
+      child: const MyApp(),
+      ),
+    );
+  }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -91,28 +96,26 @@ class CoffeeIntroScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 30),
+                  // Inside your CoffeeIntroScreen widget
                   InkWell(
                     onTap: () {
-                      print("Navigating...");
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 55,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD6771F),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Get Started',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      // Create the coffee object to pass
+                      final coffeeData = Coffee(
+                        name: "Espresso Coffee",
+                        description: "A cappuccino is an approximately 150 ml (5 oz) beverage, with 25 ml of espresso coffee and 85ml of fresh milk the fo..",
+                        price: "\$ 4.53",
+                        image: 'assets/images/coffee_detail.png', // Ensure this exists in your assets
+                      );
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CoffeeDetailScreen(coffee: coffeeData),
                         ),
-                      ),
-                    ),
-                  ),
+                      );
+                    },
+                    // ... rest of your child code
+                  )
                 ],
               ),
             ),
