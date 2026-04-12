@@ -54,7 +54,6 @@ class CoffeeIntroScreen extends StatelessWidget {
             ),
           ),
 
-          // Bottom Content
 
           Positioned(
             bottom: 0,
