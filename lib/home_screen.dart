@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:finalboss/size_ext.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

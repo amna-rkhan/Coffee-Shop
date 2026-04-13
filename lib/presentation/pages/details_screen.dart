@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../data/models/coffee_model.dart';
+import 'package:finalboss/coffee_provider.dart';
 
-class CoffeeDetailsPage extends StatefulWidget {
+class DetailsScreen extends StatefulWidget {
   final Coffee coffee;
-  const CoffeeDetailsPage({super.key, required this.coffee});
+  const DetailsScreen({super.key, required this.coffee});
 
   @override
-  State<CoffeeDetailsPage> createState() => _CoffeeDetailsPageState();
+  State<DetailsScreen> createState() => _DetailsScreenState();
 }
 
-class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
+class _DetailsScreenState extends State<DetailsScreen> {
   String selectedSize = 'M';
 
   @override
   Widget build(BuildContext context) {
+    // Variable for width-based responsiveness
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -25,7 +30,7 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // Main Coffee Image
+                  // 1. Main Coffee Image
                   Positioned.fill(
                     child: Image.asset(
                       widget.coffee.imagePath,
@@ -42,17 +47,28 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
                         children: [
                           GestureDetector(
                             onTap: () => Navigator.pop(context),
-                            child: Image.asset("asset/icons/Arrow - Down 2.png",
-                                width: 24, height: 24, color: Colors.white),
+                            child: const Icon(Icons.arrow_back_ios, color: Colors.white),
                           ),
-                          Image.asset("asset/icons/heart.png",
-                              width: 24, height: 24, color: Colors.white),
+                          // Heart Icon with Provider Logic
+                          Consumer<CoffeeProvider>(
+                            builder: (context, provider, child) {
+                              bool isFav = provider.favoriteCoffee.any((c) => c.name == widget.coffee.name);
+                              return GestureDetector(
+                                onTap: () => provider.toggleFavorite(widget.coffee),
+                                child: Icon(
+                                  isFav ? Icons.favorite : Icons.favorite_border,
+                                  color: isFav ? Colors.red : Colors.white,
+                                  size: 24,
+                                ),
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ),
                   ),
 
-                  // 2. POSITIONED OVERLAY
+                  // 2. Positioned Overlay (The Info Card)
                   Positioned(
                     bottom: -55,
                     left: 20,
@@ -81,12 +97,21 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
                               children: [
                                 Text(
                                   widget.coffee.name,
-                                  style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Sora'),
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Sora'
+                                  ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
                                   widget.coffee.category,
-                                  style: const TextStyle(color: Colors.black, fontSize: 12, fontFamily: 'Sora'),
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12,
+                                      fontFamily: 'Sora'
+                                  ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ],
@@ -117,7 +142,7 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
             ),
             const SizedBox(height: 70),
 
-            // 3. DESCRIPTION & SIZE CONTAINER
+            // 3. Description & Size Container
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -129,18 +154,24 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Description", style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600, fontFamily: 'Sora')),
+                    const Text("Description", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, fontFamily: 'Sora')),
                     const SizedBox(height: 20),
-                    const Text(
-                      "A cappuccino is an approximately 150 ml (5 oz) beverage, with 25 ml of espresso coffee and 85ml of fresh milk the fo.. Read More",
-                      style: TextStyle(color: Colors.black, fontSize: 14 ,height: 1.6, fontWeight: FontWeight.w400, fontFamily: 'Sora'),
+                    Text(
+                      widget.coffee.description,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          height: 1.6,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Sora'
+                      ),
                     ),
                     const SizedBox(height: 20),
                     const Text("Size", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Sora')),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: ['S', 'M', 'L'].map((size) => _buildSizeButton(size)).toList(),
+                      children: ['S', 'M', 'L'].map((size) => _buildSizeButton(size, screenWidth)).toList(),
                     ),
                   ],
                 ),
@@ -149,14 +180,11 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
 
             const SizedBox(height: 30),
 
-            // 4. PRICE & BUY BUTTON CONTAINER
+            // 4. Price & Buy Button Container
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
+              child: SizedBox(
                 height: 65,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -183,22 +211,31 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
                         ),
                       ],
                     ),
-                    const SizedBox(width: 79),
+                    const SizedBox(width: 20),
                     Expanded(
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE27D19),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: const Text(
-                          "Buy Now",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Sora'
+                      child: GestureDetector(
+                        onTap: () {
+                          // Corrected Provider call
+                          context.read<CoffeeProvider>().addToCart(widget.coffee);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("${widget.coffee.name} added to cart!")),
+                          );
+                        },
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE27D19),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: const Text(
+                            "Buy Now",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Sora'
+                            ),
                           ),
                         ),
                       ),
@@ -214,12 +251,13 @@ class _CoffeeDetailsPageState extends State<CoffeeDetailsPage> {
     );
   }
 
-  Widget _buildSizeButton(String size) {
+  // Responsive Size Button Method
+  Widget _buildSizeButton(String size, double screenWidth) {
     bool isSelected = selectedSize == size;
     return GestureDetector(
       onTap: () => setState(() => selectedSize = size),
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.24,
+        width: screenWidth * 0.24, // Scaling for responsiveness
         height: 40,
         alignment: Alignment.center,
         decoration: BoxDecoration(

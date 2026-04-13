@@ -1,9 +1,8 @@
-import 'package:finalboss/presentation/pages/home_page.dart';
+import 'package:finalboss/presentation/pages/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:finalboss/size_ext.dart';
 import 'package:finalboss/coffee_provider.dart';
-import 'package:finalboss/home_screen.dart'; // UPDATED IMPORT
 import 'package:finalboss/forgot_password.dart';
 import 'package:finalboss/admin_login.dart';
 import 'package:finalboss/register_screen.dart';
@@ -28,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Image.asset(
               'assets/images/Body.png',
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(color: Colors.black),
             ),
           ),
           Center(
@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
               width: 90.w(context),
               padding: const EdgeInsets.all(25),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: Colors.white.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(30),
               ),
               child: SingleChildScrollView(
@@ -55,9 +55,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
+                        fontFamily: 'Sora',
                       ),
                     ),
-                    const Text('Brewing moments, one cup at a time.'),
+                    const Text(
+                      'Brewing moments, one cup at a time.',
+                      style: TextStyle(fontFamily: 'Sora'),
+                    ),
                     const SizedBox(height: 30),
 
                     _buildLabel("EMAIL ADDRESS"),
@@ -90,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               decoration: TextDecoration.underline,
+                              fontFamily: 'Sora',
                             ),
                           ),
                         ),
@@ -105,7 +110,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 30),
 
-                    // LOGIN BUTTON WITH UPDATED NAVIGATION
                     SizedBox(
                       width: double.infinity,
                       height: 55,
@@ -118,18 +122,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           final email = _emailController.text;
                           Provider.of<CoffeeProvider>(context, listen: false).loginUser(email);
 
-                          // NAVIGATION ADDED HERE
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const HomePage(),
+                              builder: (context) => const MainScreen(),
                             ),
                           );
                         },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Log In to Account", style: TextStyle(color: Colors.white)),
+                            Text("Log In to Account", style: TextStyle(color: Colors.white, fontFamily: 'Sora')),
                             SizedBox(width: 10),
                             Icon(Icons.arrow_forward, color: Colors.white),
                           ],
@@ -147,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: const Text(
                         "New to the craft? Create Account",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Sora'),
                       ),
                     ),
 
@@ -166,6 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           decoration: TextDecoration.underline,
+                          fontFamily: 'Sora',
                         ),
                       ),
                     ),
@@ -184,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
       alignment: Alignment.centerLeft,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
-        child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+        child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, fontFamily: 'Sora')),
       ),
     );
   }

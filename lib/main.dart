@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CoffeeIntroScreen(), // App starts here
+      home: CoffeeIntroScreen(),
     );
   }
 }
@@ -39,7 +39,7 @@ class CoffeeIntroScreen extends StatelessWidget {
             top: 0,
             left: 0,
             right: 0,
-            height: 60.h(context), // USE SIZE EXTENSION HERE (60% of height)
+            height: 60.h(context),
             child: Image.asset(
               'assets/images/image.png',
               fit: BoxFit.cover,
@@ -53,10 +53,9 @@ class CoffeeIntroScreen extends StatelessWidget {
 
           Positioned(
             bottom: 0,
-
             child: Container(
-              height: 45.h(context), // USE SIZE EXTENSION HERE (45% of height)
-              width: 100.w(context),  // USE SIZE EXTENSION HERE (100% of width)
+              height: 45.h(context),
+              width: 100.w(context),
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
               decoration: const BoxDecoration(
                 color: Color(0xFF1C1C1C),
@@ -73,6 +72,7 @@ class CoffeeIntroScreen extends StatelessWidget {
                         color: Colors.white,
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Sora',
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -82,6 +82,7 @@ class CoffeeIntroScreen extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.white60,
                         fontSize: 16,
+                        fontFamily: 'Sora',
                       ),
                     ),
                     const SizedBox(height: 25),
@@ -110,6 +111,7 @@ class CoffeeIntroScreen extends StatelessWidget {
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Sora',
                           ),
                         ),
                       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/models/coffee_model.dart';
-import '../pages/third.dart';
+import '../pages/details_screen.dart';
 
 class CoffeeCard extends StatelessWidget {
   final Coffee coffee;
@@ -14,7 +14,7 @@ class CoffeeCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CoffeeDetailsPage(coffee: coffee),
+            builder: (context) => DetailsScreen(coffee: coffee),
           ),
         );
       },
@@ -23,7 +23,6 @@ class CoffeeCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          // Using .withValues instead of .withOpacity
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -53,7 +52,6 @@ class CoffeeCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      // Using .withValues here for the transparent overlay
                       color: Colors.black.withValues(alpha: 0.16),
                       borderRadius: const BorderRadius.only(
                         bottomRight: Radius.circular(16),
