@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/category_chips.dart';
-import '../../data/models/coffee_model.dart';
-import 'package:finalboss/coffee_provider.dart';
+import 'package:finalboss/data/models/coffee_model.dart';
+import 'package:finalboss/core/features/presentation/pages/coffee_provider.dart';
 import 'details_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -41,43 +41,40 @@ class _HomePageState extends State<HomePage> {
         .where((coffee) => coffee.category == selectedCategory)
         .toList();
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildHeaderStack(),
-              const SizedBox(height: 55),
-              CategoryChips(
-                selectedCategory: selectedCategory,
-                onCategorySelected: (category) {
-                  setState(() => selectedCategory = category);
-                },
-              ),
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: constraints.maxWidth > 600 ? 3 : 2,
-                    childAspectRatio: 0.65,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                  ),
-                  itemCount: filteredCoffees.length,
-                  itemBuilder: (context, index) {
-                    final coffee = filteredCoffees[index];
-                    return _buildCoffeeCard(context, coffee);
-                  },
-                ),
-              ),
-              const SizedBox(height: 120),
-            ],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeaderStack(),
+          const SizedBox(height: 55),
+          CategoryChips(
+            selectedCategory: selectedCategory,
+            onCategorySelected: (category) {
+              setState(() => selectedCategory = category);
+            },
           ),
-        );
-      },
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.68,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              itemCount: filteredCoffees.length,
+              itemBuilder: (context, index) {
+                final coffee = filteredCoffees[index];
+                return _buildCoffeeCard(context, coffee);
+              },
+            ),
+          ),
+          const SizedBox(height: 120),
+        ],
+      ),
     );
   }
 
@@ -90,13 +87,13 @@ class _HomePageState extends State<HomePage> {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withValues(alpha: 0.02),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),
@@ -105,66 +102,73 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(coffee.imagePath, fit: BoxFit.cover, width: double.infinity),
-                  ),
-                  Positioned(
-                    top: 8, left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.star, color: Color(0xFFFBBE21), size: 10),
-                          const SizedBox(width: 4),
-                          Text(
-                            coffee.rating.toString(),
-                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold, fontFamily: 'Sora'),
-                          ),
-                        ],
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(coffee.imagePath, height: 132, width: double.infinity, fit: BoxFit.cover),
+                ),
+                Positioned(
+                  top: 0, left: 0,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.16),
+                      borderRadius: const BorderRadius.only(
+                        bottomRight: Radius.circular(16),
+                        topLeft: Radius.circular(12),
                       ),
                     ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.star, color: Color(0xFFFBBE21), size: 12),
+                        const SizedBox(width: 4),
+                        Text(
+                          coffee.rating.toString(),
+                          style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold, fontFamily: 'Sora'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(coffee.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'Sora', color: Color(0xFF2F2D2C))),
+                  const SizedBox(height: 4),
+                  Text(coffee.description, style: const TextStyle(color: Color(0xFF9B9B9B), fontSize: 12, fontFamily: 'Sora')),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("\$ ${coffee.price}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, fontFamily: 'Sora', color: Color(0xFF2F4B4E))),
+                      GestureDetector(
+                        onTap: () {
+                          context.read<CoffeeProvider>().addToCart(coffee);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("${coffee.name} added to cart!", style: const TextStyle(fontFamily: 'Sora')),
+                              duration: const Duration(seconds: 1),
+                              backgroundColor: const Color(0xFFC67C4E),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(color: const Color(0xFFC67C4E), borderRadius: BorderRadius.circular(10)),
+                          child: const Icon(Icons.add, color: Colors.white, size: 16),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 12),
-            Text(coffee.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'Sora')),
-            Text(coffee.description, style: const TextStyle(color: Colors.grey, fontSize: 12, fontFamily: 'Sora')),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("\$ ${coffee.price}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, fontFamily: 'Sora')),
-                GestureDetector(
-                  onTap: () {
-                    context.read<CoffeeProvider>().addToCart(coffee);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("${coffee.name} added to cart!", style: const TextStyle(fontFamily: 'Sora')),
-                        duration: const Duration(seconds: 1),
-                        backgroundColor: const Color(0xFFC67C4E),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFC67C4E),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.add, color: Colors.white, size: 20),
-                  ),
-                ),
-              ],
-            )
           ],
         ),
       ),
@@ -179,11 +183,7 @@ class _HomePageState extends State<HomePage> {
           height: 161,
           width: double.infinity,
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [Color(0xFF131313), Color(0xFF313131)],
-            ),
+            color: Color(0xFF131313),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: SafeArea(

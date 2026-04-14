@@ -1,11 +1,11 @@
-import 'package:finalboss/presentation/pages/main_screen.dart';
+import 'package:finalboss/core/features/presentation/pages/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:finalboss/size_ext.dart';
-import 'package:finalboss/coffee_provider.dart';
-import 'package:finalboss/forgot_password.dart';
-import 'package:finalboss/admin_login.dart';
-import 'package:finalboss/register_screen.dart';
+import 'package:finalboss/core/features/presentation/pages/size_ext.dart';
+import 'package:finalboss/core/features/presentation/pages/coffee_provider.dart';
+import 'package:finalboss/core/features/presentation/pages/forgot_password.dart';
+import 'package:finalboss/core/features/presentation/pages/admin_login.dart';
+import 'package:finalboss/core/features/presentation/pages/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

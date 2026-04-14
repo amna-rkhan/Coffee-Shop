@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:finalboss/coffee_provider.dart';
+import 'package:finalboss/core/features/presentation/pages/coffee_provider.dart';
 import 'package:provider/provider.dart';
 import '../widgets/order_summary_card.dart';
 
@@ -15,7 +15,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<CoffeeProvider>();
     final cart = provider.cart;
-    double subtotal = cart.fold(0, (sum, item) => sum + item.price);
+    
+    // Fixed subtotal calculation for Map-based cart
+    double subtotal = cart.fold(0, (sum, item) => sum + (item['coffee'].price * item['quantity']));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -190,16 +192,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   onPressed: () {
+                    context.read<CoffeeProvider>().clearCart(); // Clear cart on success
                     Navigator.pop(context); // Close dialog
                     Navigator.pop(context); // Back to Cart
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Tracking feature coming soon!", style: TextStyle(fontFamily: 'Sora')),
-                        backgroundColor: Color(0xFFC67C4E),
-                      ),
-                    );
+                    Navigator.pop(context); // Back to Main/Home
                   },
-                  child: const Text("Track Order", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: const Text("Go to Home", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),

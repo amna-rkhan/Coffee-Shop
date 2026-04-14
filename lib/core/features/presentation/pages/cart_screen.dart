@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:finalboss/coffee_provider.dart';
+import 'package:finalboss/core/features/presentation/pages/coffee_provider.dart';
+import 'package:finalboss/data/models/coffee_model.dart';
 import '../widgets/order_summary_card.dart';
 import 'checkout_screen.dart';
 
@@ -14,8 +15,8 @@ class CartScreen extends StatelessWidget {
     final provider = context.watch<CoffeeProvider>();
     final cart = provider.cart;
 
-    // Calculate subtotal
-    double subtotal = cart.fold(0, (sum, item) => sum + item.price);
+    // Fixed subtotal calculation for Map-based cart
+    double subtotal = cart.fold(0, (sum, item) => sum + (item['coffee'].price * item['quantity']));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -68,7 +69,7 @@ class CartScreen extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: cart.length,
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    itemBuilder: (context, index) => _buildCartTile(cart[index]),
+                    itemBuilder: (context, index) => _buildCartTile(context, cart[index]),
                   ),
                 ),
                 Padding(
@@ -100,7 +101,10 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCartTile(coffee) {
+  Widget _buildCartTile(BuildContext context, Map<String, dynamic> item) {
+    final Coffee coffee = item['coffee'];
+    final int quantity = item['quantity'];
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
@@ -134,19 +138,23 @@ class CartScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    _qtyIcon(Icons.remove),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Text("1", style: TextStyle(fontFamily: 'Sora')),
+                    _qtyIcon(Icons.remove, onTap: () {
+                      context.read<CoffeeProvider>().updateQuantity(coffee, -1);
+                    }),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text("$quantity", style: const TextStyle(fontFamily: 'Sora', fontWeight: FontWeight.bold)),
                     ),
-                    _qtyIcon(Icons.add),
+                    _qtyIcon(Icons.add, onTap: () {
+                      context.read<CoffeeProvider>().updateQuantity(coffee, 1);
+                    }),
                   ],
                 )
               ],
             ),
           ),
           Text(
-            "\$${coffee.price}",
+            "\$${(coffee.price * quantity).toStringAsFixed(2)}",
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'Sora'),
           ),
         ],
@@ -154,14 +162,17 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _qtyIcon(IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+  Widget _qtyIcon(IconData icon, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFEAEAEA)),
+        ),
+        child: Icon(icon, size: 18, color: Colors.black),
       ),
-      child: Icon(icon, size: 18, color: Colors.black),
     );
   }
 

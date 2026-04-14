@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:finalboss/login.dart';
-import 'package:finalboss/size_ext.dart';
-import 'package:finalboss/coffee_provider.dart';
+import 'package:finalboss/core/features/presentation/pages/login.dart';
+import 'package:finalboss/core/features/presentation/pages/size_ext.dart';
+import 'package:finalboss/core/features/presentation/pages/coffee_provider.dart';
 
 void main() {
   runApp(

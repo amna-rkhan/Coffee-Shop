@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:finalboss/size_ext.dart';
+import 'package:finalboss/core/features/presentation/pages/size_ext.dart';
 
 class AdminLoginScreen extends StatelessWidget {
   const AdminLoginScreen({super.key});
