@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:finalboss/core/features/presentation/pages/coffee_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:finalboss/core/providers/coffee_provider.dart';
 import '../widgets/order_summary_card.dart';
 
-class CheckoutScreen extends StatefulWidget {
+class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
 
-  @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
-}
-
-class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CoffeeProvider>();
     final cart = provider.cart;
-    
-    // Fixed subtotal calculation for Map-based cart
     double subtotal = cart.fold(0, (sum, item) => sum + (item['coffee'].price * item['quantity']));
 
     return Scaffold(
@@ -24,7 +17,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
           onPressed: () => Navigator.pop(context),
@@ -33,177 +25,61 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           "Checkout",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontFamily: 'Sora'),
         ),
+        centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
+      body: Padding(
+        padding: const EdgeInsets.all(25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
             const Text(
-              "DELIVERY ADDRESS",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black, fontFamily: 'Sora'),
+              "Delivery Address",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, fontFamily: 'Sora'),
             ),
-            const SizedBox(height: 16),
-            _buildAddressCard(),
-            const SizedBox(height: 30),
+            const SizedBox(height: 15),
             const Text(
-              "PAYMENT METHOD",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black, fontFamily: 'Sora'),
+              "Jl. Kp. Baru No. 12, South Jakarta",
+              style: TextStyle(color: Colors.grey, fontFamily: 'Sora'),
             ),
-            const SizedBox(height: 16),
-            _paymentOption("Apple Pay", Icons.apple, true),
-            _paymentOption("Mastercard", Icons.credit_card, false),
-            const SizedBox(height: 30),
+            const Divider(height: 40),
             OrderSummaryCard(subtotal: subtotal, deliveryFee: 2.50),
-            const SizedBox(height: 40),
-            _mainActionButton(context),
-            const SizedBox(height: 20),
-            const Center(
-              child: Text(
-                "By placing this order you agree to our Terms of Service",
-                style: TextStyle(color: Colors.grey, fontSize: 11, fontFamily: 'Sora'),
+            const Spacer(),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFC67C4E),
+                minimumSize: const Size(double.infinity, 62),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+              onPressed: () {
+                // First save the order to history, then clear cart
+                context.read<CoffeeProvider>().placeOrder();
+                
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Success!", style: TextStyle(fontFamily: 'Sora')),
+                    content: const Text("Your order has been placed successfully.", style: TextStyle(fontFamily: 'Sora')),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Close dialog
+                          Navigator.pop(context); // Go back from checkout
+                        },
+                        child: const Text("OK", style: TextStyle(color: Color(0xFFC67C4E), fontWeight: FontWeight.bold)),
+                      )
+                    ],
+                  ),
+                );
+              },
+              child: const Text(
+                "Order Now",
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Sora'),
               ),
             ),
-            const SizedBox(height: 20),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildAddressCard() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF9F9F9),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFFC67C4E),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.location_on, color: Colors.white),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Work Office", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'Sora')),
-                const Text(
-                  "123 Innovation Drive, Suite 400",
-                  style: TextStyle(color: Colors.grey, fontSize: 12, fontFamily: 'Sora'),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _paymentOption(String title, IconData icon, bool selected) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: selected ? const Color(0xFF312522) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: selected ? Colors.transparent : const Color(0xFFEAEAEA)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: selected ? Colors.white : Colors.black),
-          const SizedBox(width: 15),
-          Text(
-            title,
-            style: TextStyle(
-              color: selected ? Colors.white : Colors.black,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Sora',
-            ),
-          ),
-          const Spacer(),
-          Icon(
-            selected ? Icons.radio_button_checked : Icons.radio_button_off,
-            color: selected ? Colors.white : Colors.grey,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _mainActionButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 62,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFC67C4E),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        onPressed: () => _showOrderSuccessDialog(context),
-        child: const Text(
-          "Order Now",
-          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Sora'),
-        ),
-      ),
-    );
-  }
-
-  void _showOrderSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          child: Padding(
-            padding: const EdgeInsets.all(25),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.check_circle, color: Colors.green, size: 80),
-                const SizedBox(height: 20),
-                const Text(
-                  "Order Successful!",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, fontFamily: 'Sora'),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  "Your coffee is being prepared and will be delivered shortly.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey, fontFamily: 'Sora'),
-                ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFC67C4E),
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  onPressed: () {
-                    context.read<CoffeeProvider>().clearCart(); // Clear cart on success
-                    Navigator.pop(context); // Close dialog
-                    Navigator.pop(context); // Back to Cart
-                    Navigator.pop(context); // Back to Main/Home
-                  },
-                  child: const Text("Go to Home", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }

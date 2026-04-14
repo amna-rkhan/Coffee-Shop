@@ -1,119 +1,202 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:finalboss/core/providers/coffee_provider.dart';
+import 'package:finalboss/core/features/presentation/pages/size_ext.dart';
 import 'edit_profile_screen.dart';
+import 'order_history_screen.dart';
+import 'payment_methods_screen.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<CoffeeProvider>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFFDFBFA),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
+        padding: EdgeInsets.symmetric(horizontal: 6.w(context)),
         child: Column(
           children: [
-            const SizedBox(height: 60),
-            _buildProfileHeader(),
-            const SizedBox(height: 30),
-            _buildStatsRow(),
-            const SizedBox(height: 40),
+            SizedBox(height: 7.h(context)),
+            _buildProfileHeader(context, provider),
+            SizedBox(height: 4.h(context)),
+            _buildStatsRow(context, provider),
+            SizedBox(height: 4.h(context)),
+            _buildLoyaltyCard(context, provider),
+            SizedBox(height: 4.h(context)),
             _buildAccountManagement(context),
-            const SizedBox(height: 40),
-            _buildLogoutButton(),
-            const SizedBox(height: 40),
+            SizedBox(height: 4.h(context)),
+            _buildLogoutButton(context),
+            SizedBox(height: 5.h(context)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileHeader() {
+  Widget _buildProfileHeader(BuildContext context, CoffeeProvider provider) {
+    final double size = 25.w(context);
+    final int cacheSize = (size * MediaQuery.of(context).devicePixelRatio).round();
+
     return Column(
       children: [
         Stack(
           clipBehavior: Clip.none,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(24),
-              child: Container(
-                width: 100, height: 100,
-                color: Colors.grey.shade300,
-                child: const Icon(Icons.person, size: 70, color: Colors.white),
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFC67C4E), width: 2),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: Container(
+                    width: size,
+                    height: size,
+                    color: const Color(0xFF2F2D2C),
+                    child: provider.profileImageBytes != null 
+                      ? Image.memory(
+                          provider.profileImageBytes!, 
+                          fit: BoxFit.cover,
+                          cacheWidth: cacheSize,
+                          cacheHeight: cacheSize,
+                          filterQuality: FilterQuality.high,
+                          isAntiAlias: true,
+                        )
+                      : Image.asset(
+                          'asset/images/user.png', 
+                          fit: BoxFit.cover,
+                          cacheWidth: cacheSize,
+                          cacheHeight: cacheSize,
+                          filterQuality: FilterQuality.high,
+                          errorBuilder: (context, error, stackTrace) => 
+                            Icon(Icons.person, size: 12.w(context), color: Colors.white24),
+                        ),
+                  ),
+                ),
               ),
             ),
             Positioned(
-              bottom: 0,
-              right: -5,
+              bottom: 5,
+              right: 0,
               child: Container(
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: const Color(0xFFC67C4E),
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                 ),
-                child: const Icon(Icons.check, color: Colors.white, size: 14),
+                child: const Icon(Icons.verified, color: Colors.white, size: 14),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 20),
-        const Text(
-          "Julian Thorne",
-          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, fontFamily: 'Sora'),
+        SizedBox(height: 2.h(context)),
+        Text(
+          provider.userName,
+          style: TextStyle(fontSize: 6.w(context), fontWeight: FontWeight.bold, fontFamily: 'Sora', color: const Color(0xFF2F2D2C)),
         ),
-        const SizedBox(height: 4),
-        const Text(
-          "Curating moments, one cup at a time.",
-          style: TextStyle(color: Colors.grey, fontSize: 14, fontFamily: 'Sora', fontStyle: FontStyle.italic),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: const Color(0xFF2F2D2C),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Text(
+            "GOLD MEMBER",
+            style: TextStyle(color: Color(0xFFC67C4E), fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildStatsRow() {
+  Widget _buildStatsRow(BuildContext context, CoffeeProvider provider) {
     return Row(
       children: [
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 5))
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.coffee, color: Color(0xFF4B3732), size: 24),
-                const SizedBox(height: 15),
-                const Text("128", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Sora')),
-                const Text("Cups Ordered", style: TextStyle(color: Colors.grey, fontSize: 12, fontFamily: 'Sora')),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF0E6),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.sell_outlined, color: Color(0xFF4B3732), size: 24),
-                const SizedBox(height: 15),
-                const Text("2,450", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Sora')),
-                const Text("Bean Points", style: TextStyle(color: Color(0xFFC67C4E), fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Sora')),
-              ],
-            ),
-          ),
-        ),
+        _buildStatItem(context, provider.cupsOrdered.toString(), "Cups Ordered", Icons.coffee_rounded, const Color(0xFF4B3732)),
+        SizedBox(width: 4.w(context)),
+        _buildStatItem(context, provider.beanPoints.toString(), "Bean Points", Icons.auto_awesome, const Color(0xFFC67C4E)),
       ],
+    );
+  }
+
+  Widget _buildStatItem(BuildContext context, String value, String label, IconData icon, Color color) {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.all(4.w(context)),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 10))
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            SizedBox(height: 1.5.h(context)),
+            Text(value, style: TextStyle(fontSize: 5.5.w(context), fontWeight: FontWeight.bold, fontFamily: 'Sora', color: const Color(0xFF2F2D2C))),
+            Text(label, style: TextStyle(color: Colors.grey, fontSize: 3.w(context), fontFamily: 'Sora')),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoyaltyCard(BuildContext context, CoffeeProvider provider) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(5.w(context)),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF2F2D2C), Color(0xFF131313)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("Rewards Progress", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Sora')),
+              Text("${provider.pointsNeeded} to next level", style: TextStyle(color: const Color(0xFFC67C4E), fontSize: 2.5.w(context), fontWeight: FontWeight.bold)),
+            ],
+          ),
+          SizedBox(height: 2.h(context)),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: provider.rewardProgress,
+              backgroundColor: Colors.white10,
+              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFC67C4E)),
+              minHeight: 8,
+            ),
+          ),
+          SizedBox(height: 2.h(context)),
+          const Text(
+            "Redeem your points for a free 'Artisanal Latte' or any medium roast.",
+            style: TextStyle(color: Colors.white60, fontSize: 11, height: 1.4, fontFamily: 'Sora'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -121,9 +204,12 @@ class ProfileScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "ACCOUNT MANAGEMENT",
-          style: TextStyle(color: Color(0xFF4B3732), fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2),
+        const Padding(
+          padding: EdgeInsets.only(left: 4.0),
+          child: Text(
+            "ACCOUNT MANAGEMENT",
+            style: TextStyle(color: Color(0xFF4B3732), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+          ),
         ),
         const SizedBox(height: 15),
         Container(
@@ -131,20 +217,23 @@ class ProfileScreen extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
-              BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 5))
+              BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 15, offset: const Offset(0, 5))
             ],
           ),
           child: Column(
             children: [
               _buildMenuItem(context, Icons.person_outline, "Edit Profile", onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const EditProfileScreen()),
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfileScreen()));
               }),
-              _buildMenuItem(context, Icons.history, "Order History"),
-              _buildMenuItem(context, Icons.account_balance_wallet_outlined, "Payment Methods"),
-              _buildMenuItem(context, Icons.settings_outlined, "Settings", showDivider: false),
+              _buildMenuItem(context, Icons.history, "Order History", onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderHistoryScreen()));
+              }),
+              _buildMenuItem(context, Icons.account_balance_wallet_outlined, "Payment Methods", onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentMethodsScreen()));
+              }),
+              _buildMenuItem(context, Icons.settings_outlined, "Settings", showDivider: false, onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsScreen()));
+              }),
             ],
           ),
         ),
@@ -159,7 +248,7 @@ class ProfileScreen extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(24),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(4.w(context)),
             child: Row(
               children: [
                 Container(
@@ -167,11 +256,11 @@ class ProfileScreen extends StatelessWidget {
                   decoration: BoxDecoration(color: const Color(0xFFF9F9F9), borderRadius: BorderRadius.circular(12)),
                   child: Icon(icon, color: const Color(0xFF4B3732), size: 22),
                 ),
-                const SizedBox(width: 15),
+                SizedBox(width: 3.w(context)),
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'Sora'),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 3.8.w(context), fontFamily: 'Sora', color: const Color(0xFF2F2D2C)),
                   ),
                 ),
                 const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 14),
@@ -185,7 +274,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLogoutButton() {
+  Widget _buildLogoutButton(BuildContext context) {
     return Container(
       width: double.infinity,
       height: 60,
@@ -193,16 +282,11 @@ class ProfileScreen extends StatelessWidget {
         color: const Color(0xFFFFF5F5),
         borderRadius: BorderRadius.circular(30),
       ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.logout, color: Color(0xFFC62828), size: 20),
-          SizedBox(width: 10),
-          Text(
-            "Logout",
-            style: TextStyle(color: Color(0xFFC62828), fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'Sora'),
-          ),
-        ],
+      child: Center(
+        child: Text(
+          "Logout",
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 4.w(context), fontFamily: 'Sora'),
+        ),
       ),
     );
   }

@@ -2,7 +2,7 @@ import 'package:finalboss/core/features/presentation/pages/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:finalboss/core/features/presentation/pages/size_ext.dart';
-import 'package:finalboss/core/features/presentation/pages/coffee_provider.dart';
+import 'package:finalboss/core/providers/coffee_provider.dart';
 import 'package:finalboss/core/features/presentation/pages/forgot_password.dart';
 import 'package:finalboss/core/features/presentation/pages/admin_login.dart';
 import 'package:finalboss/core/features/presentation/pages/register_screen.dart';
@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/images/Body.png',
+              'asset/images/Body.png', // Fixed Path
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) => Container(color: Colors.black),
             ),
@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
               width: 90.w(context),
               padding: const EdgeInsets.all(25),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: Colors.white.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(30),
               ),
               child: SingleChildScrollView(

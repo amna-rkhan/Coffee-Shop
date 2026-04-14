@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:finalboss/core/features/presentation/pages/coffee_provider.dart';
+import 'package:finalboss/core/providers/coffee_provider.dart';
 import 'package:finalboss/data/models/coffee_model.dart';
 
 class FavoriteScreen extends StatelessWidget {

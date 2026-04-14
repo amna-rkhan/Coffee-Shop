@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:finalboss/core/features/presentation/pages/size_ext.dart';
 import 'home_page.dart';
 import 'favorite_screen.dart';
 import 'cart_screen.dart';
@@ -36,13 +37,13 @@ class _MainScreenState extends State<MainScreen> {
         index: _currentIndex,
         children: pages,
       ),
-      bottomNavigationBar: _buildBottomNav(),
+      bottomNavigationBar: _buildBottomNav(context),
     );
   }
 
-  Widget _buildBottomNav() {
+  Widget _buildBottomNav(BuildContext context) {
     return Container(
-      height: 90,
+      height: 10.h(context) > 80 ? 10.h(context) : 80,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -56,17 +57,17 @@ class _MainScreenState extends State<MainScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem("asset/icons/home.png", 0),
-          _buildNavItem("asset/icons/heart.png", 1),
-          _buildNavItem("asset/icons/Bag 2.png", 2),
-          _buildNavItem("asset/icons/bell.png", 3),
-          _buildNavItem("", 4, isProfile: true),
+          _buildNavItem(context, "asset/icons/home.png", 0),
+          _buildNavItem(context, "asset/icons/heart.png", 1),
+          _buildNavItem(context, "asset/icons/Bag 2.png", 2),
+          _buildNavItem(context, "asset/icons/bell.png", 3),
+          _buildNavItem(context, "", 4, isProfile: true),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(String assetPath, int index, {bool isProfile = false}) {
+  Widget _buildNavItem(BuildContext context, String assetPath, int index, {bool isProfile = false}) {
     bool isSelected = _currentIndex == index;
     return GestureDetector(
       onTap: () => setState(() => _currentIndex = index),
@@ -77,13 +78,13 @@ class _MainScreenState extends State<MainScreen> {
           isProfile 
             ? Icon(
                 Icons.person_outline,
-                size: 28,
+                size: 7.w(context) > 28 ? 28 : 7.w(context),
                 color: isSelected ? const Color(0xFFC67C4E) : const Color(0xFF8D8D8D)
               )
             : Image.asset(
                 assetPath,
-                width: 24,
-                height: 24,
+                width: 6.w(context) > 24 ? 24 : 6.w(context),
+                height: 6.w(context) > 24 ? 24 : 6.w(context),
                 color: isSelected ? const Color(0xFFC67C4E) : const Color(0xFF8D8D8D),
               ),
           const SizedBox(height: 4),

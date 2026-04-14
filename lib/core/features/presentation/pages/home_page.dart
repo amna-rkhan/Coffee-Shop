@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:finalboss/core/features/presentation/pages/size_ext.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/category_chips.dart';
 import 'package:finalboss/data/models/coffee_model.dart';
-import 'package:finalboss/core/features/presentation/pages/coffee_provider.dart';
+import 'package:finalboss/core/providers/coffee_provider.dart';
 import 'details_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -45,17 +46,17 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeaderStack(),
-          const SizedBox(height: 55),
+          _buildHeaderStack(context),
+          SizedBox(height: 6.h(context)),
           CategoryChips(
             selectedCategory: selectedCategory,
             onCategorySelected: (category) {
               setState(() => selectedCategory = category);
             },
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 3.h(context)),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
+            padding: EdgeInsets.symmetric(horizontal: 6.w(context)),
             child: GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -72,7 +73,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
-          const SizedBox(height: 120),
+          SizedBox(height: 15.h(context)),
         ],
       ),
     );
@@ -175,47 +176,57 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHeaderStack() {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          height: 161,
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Color(0xFF131313),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 25),
-          child: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                const Text("Location", style: TextStyle(color: Color(0xFFB7B7B7), fontSize: 12, fontFamily: 'Sora')),
-                const SizedBox(height: 4),
-                Row(
+  Widget _buildHeaderStack(BuildContext context) {
+    return Consumer<CoffeeProvider>(
+      builder: (context, provider, child) {
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              height: 20.h(context),
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Color(0xFF131313),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 6.w(context)),
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("West, Balurghat ", style: TextStyle(color: Color(0xFFDDDDDD), fontWeight: FontWeight.w600, fontSize: 14, fontFamily: 'Sora')),
-                    const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 18),
+                    SizedBox(height: 1.h(context)),
+                    Text("Location", style: TextStyle(color: const Color(0xFFB7B7B7), fontSize: 3.w(context), fontFamily: 'Sora')),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text("West, Balurghat ", style: TextStyle(color: const Color(0xFFDDDDDD), fontWeight: FontWeight.w600, fontSize: 3.5.w(context), fontFamily: 'Sora')),
+                        Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 4.w(context)),
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-        Positioned(
-          top: 50, right: 25,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              width: 44, height: 44,
-              color: Colors.grey.shade800,
-              child: const Icon(Icons.person, color: Colors.white),
+            Positioned(
+              top: 6.h(context), right: 6.w(context),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  width: 11.w(context), height: 11.w(context),
+                  color: const Color(0xFF2F2D2C),
+                  child: provider.profileImageBytes != null 
+                    ? Image.memory(provider.profileImageBytes!, fit: BoxFit.cover)
+                    : Image.asset(
+                        'asset/images/user.png', 
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, color: Colors.white),
+                      ),
+                ),
+              ),
             ),
-          ),
-        ),
-        const Positioned(bottom: -26, left: 0, right: 0, child: CustomSearchBar()),
-      ],
+            const Positioned(bottom: -26, left: 0, right: 0, child: CustomSearchBar()),
+          ],
+        );
+      }
     );
   }
 }
