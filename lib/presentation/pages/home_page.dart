@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/category_chips.dart';
-// import '../widgets/coffee_card.dart';
 import '../../data/models/coffee_model.dart';
-import '../../core/providers/coffee_provider.dart';
+import 'package:finalboss/coffee_provider.dart';
 import 'details_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,7 +16,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String selectedCategory = "Cappuccino";
 
-  // RESTORED: Your complete list of 16 coffee items
   final List<Coffee> allCoffees = [
     Coffee(name: "Cappuccino", description: "with Chocolate", price: 4.53, rating: 4.8, imagePath: "asset/images/image3.png", category: "Cappuccino"),
     Coffee(name: "Cappuccino", description: "with Oat Milk", price: 3.90, rating: 4.9, imagePath: "asset/images/image4.png", category: "Cappuccino"),
@@ -39,7 +37,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Filter logic remains the same
     final filteredCoffees = allCoffees
         .where((coffee) => coffee.category == selectedCategory)
         .toList();
@@ -51,18 +48,13 @@ class _HomePageState extends State<HomePage> {
             children: [
               _buildHeaderStack(),
               const SizedBox(height: 55),
-
-              // Your exact Category Chips widget
               CategoryChips(
                 selectedCategory: selectedCategory,
                 onCategorySelected: (category) {
                   setState(() => selectedCategory = category);
                 },
               ),
-
               const SizedBox(height: 24),
-
-              // Responsive Coffee Grid with your specific padding
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: GridView.builder(
@@ -70,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: constraints.maxWidth > 600 ? 3 : 2,
-                    childAspectRatio: 0.65, // Adjust this slightly to fit your text/price perfectly
+                    childAspectRatio: 0.65,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
                   ),
@@ -89,7 +81,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Helper Card that handles Navigation and Provider Adding
   Widget _buildCoffeeCard(BuildContext context, Coffee coffee) {
     return GestureDetector(
       onTap: () {
@@ -103,6 +94,13 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,12 +114,22 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Positioned(
                     top: 8, left: 8,
-                    child: Row(
-                      children: [
-                        const Icon(Icons.star, color: Color(0xFFFBBE21), size: 12),
-                        const SizedBox(width: 4),
-                        Text(coffee.rating.toString(), style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                      ],
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.star, color: Color(0xFFFBBE21), size: 10),
+                          const SizedBox(width: 4),
+                          Text(
+                            coffee.rating.toString(),
+                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold, fontFamily: 'Sora'),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -134,18 +142,24 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("\$ ${coffee.price}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                Text("\$ ${coffee.price}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, fontFamily: 'Sora')),
                 GestureDetector(
                   onTap: () {
-                    // This is the key Provider update!
                     context.read<CoffeeProvider>().addToCart(coffee);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Added to Cart"), duration: Duration(seconds: 1)),
+                      SnackBar(
+                        content: Text("${coffee.name} added to cart!", style: const TextStyle(fontFamily: 'Sora')),
+                        duration: const Duration(seconds: 1),
+                        backgroundColor: const Color(0xFFC67C4E),
+                      ),
                     );
                   },
                   child: Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: const Color(0xFFC67C4E), borderRadius: BorderRadius.circular(10)),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFC67C4E),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: const Icon(Icons.add, color: Colors.white, size: 20),
                   ),
                 ),
@@ -157,7 +171,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Your original exact Header design
   Widget _buildHeaderStack() {
     return Stack(
       clipBehavior: Clip.none,
@@ -183,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   children: [
                     const Text("West, Balurghat ", style: TextStyle(color: Color(0xFFDDDDDD), fontWeight: FontWeight.w600, fontSize: 14, fontFamily: 'Sora')),
-                    Image.asset("asset/icons/Arrow - Down 2.png", width: 14, height: 14),
+                    const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 18),
                   ],
                 ),
               ],
@@ -194,7 +207,11 @@ class _HomePageState extends State<HomePage> {
           top: 50, right: 25,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset("asset/images/Frame 3195.png", width: 44, height: 44),
+            child: Container(
+              width: 44, height: 44,
+              color: Colors.grey.shade800,
+              child: const Icon(Icons.person, color: Colors.white),
+            ),
           ),
         ),
         const Positioned(bottom: -26, left: 0, right: 0, child: CustomSearchBar()),
