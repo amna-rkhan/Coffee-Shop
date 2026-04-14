@@ -14,20 +14,29 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
+  // This function is what gets called when 'onCheckout' is triggered
+  void _handleCheckoutRedirect() {
+    setState(() {
+      _currentIndex = 0; // Jump back to Home tab
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Note: No 'const' before CartScreen here
     final List<Widget> pages = [
       const HomePage(),
       const FavoriteScreen(),
-      CartScreen(onCheckout: () {
-        // Handle checkout logic or navigation
-        setState(() => _currentIndex = 0); // Example: go back to home after checkout
-      }),
+      CartScreen(onCheckout: _handleCheckoutRedirect),
       const NotificationScreen(),
     ];
 
     return Scaffold(
-      body: pages[_currentIndex],
+      // IndexedStack keeps your page scroll positions saved
+      body: IndexedStack(
+        index: _currentIndex,
+        children: pages,
+      ),
       bottomNavigationBar: _buildBottomNav(),
     );
   }
@@ -35,9 +44,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildBottomNav() {
     return Container(
       height: 90,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
+      decoration: const BoxDecoration(color: Colors.white),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -54,6 +61,7 @@ class _MainScreenState extends State<MainScreen> {
     bool isSelected = _currentIndex == index;
     return GestureDetector(
       onTap: () => setState(() => _currentIndex = index),
+      behavior: HitTestBehavior.opaque,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -64,17 +72,14 @@ class _MainScreenState extends State<MainScreen> {
             color: isSelected ? const Color(0xFFC67C4E) : const Color(0xFF8D8D8D),
           ),
           const SizedBox(height: 4),
-          if (isSelected)
-            Container(
-              height: 5,
-              width: 10,
-              decoration: BoxDecoration(
-                color: const Color(0xFFC67C4E),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            )
-          else
-            const SizedBox(height: 5),
+          Container(
+            height: 5,
+            width: 10,
+            decoration: BoxDecoration(
+              color: isSelected ? const Color(0xFFC67C4E) : Colors.transparent,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         ],
       ),
     );
